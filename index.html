@@ -1,0 +1,351 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>
+   music player
+  </title>
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet"/>
+  <link href="/static/style.css" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+
+ </head>
+ <body>
+
+<html>
+   <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>
+      music player
+    </title>
+   </head>
+   <body>
+    
+ 
+    
+      <div class="music-player">
+        
+       <div class="cover">
+        <img alt="" src="/media/images/24UMGIM32304_T1_cvrart.webp"/>
+       </div>
+
+       <div class="titre">
+        <h3>
+         Sabrina Carpenter
+        </h3>
+        <h1>
+         Espresso
+        </h1>
+       </div>
+       
+       <center>
+         <a href="" title="Previous Page">
+           <i class="fa fa-step-backward fa-2x"></i>
+         </a>
+         &nbsp; &nbsp; &nbsp;
+         <a href="?page=2 " title="Next Page">
+           <i class="fa fa-step-forward fa-2x"></i>
+         </a>
+       </center>
+       
+       <div class="lecteur">
+        <audio class="fc-media" id="fc-media">
+         <source src="/media/songs/Espresso-SambalpuriStar.In.mp3 " type="audio/mp3"/>
+        </audio>
+       </div>
+      </div>     
+    
+
+    <div class="right-section">
+      <div class="lyrics-container">
+        <div class="lyrics">
+            <p id="song-lyrics" class="song-lyrics" data-lyrics="[
+    {
+        &quot;time&quot;: &quot;00:08.66&quot;,
+        &quot;lyrics&quot;: &quot;Now he&#x27;s thinkin&#x27; &#x27;bout me every night, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:12.25&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:14.35&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:16.70&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:19.06&quot;,
+        &quot;lyrics&quot;: &quot;Move it up, down, left, right, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:21.40&quot;,
+        &quot;lyrics&quot;: &quot;Switch it up like Nintendo&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:23.79&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:26.26&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:28.68&quot;,
+        &quot;lyrics&quot;: &quot;I can&#x27;t relate to desperation&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:33.37&quot;,
+        &quot;lyrics&quot;: &quot;My &#x27;give a fucks&#x27; are on vacation&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:38.12&quot;,
+        &quot;lyrics&quot;: &quot;And I got this one boy&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:40.12&quot;,
+        &quot;lyrics&quot;: &quot;And he won&#x27;t stop calling&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:42.57&quot;,
+        &quot;lyrics&quot;: &quot;When they act this way&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:44.56&quot;,
+        &quot;lyrics&quot;: &quot;I know I got &#x27;em&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:46.34&quot;,
+        &quot;lyrics&quot;: &quot;Too bad your ex don&#x27;t do it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:48.76&quot;,
+        &quot;lyrics&quot;: &quot;Walked in and dream came trued it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:51.01&quot;,
+        &quot;lyrics&quot;: &quot;Soft skin and I perfumed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:55.76&quot;,
+        &quot;lyrics&quot;: &quot;I know I Mountain Dew it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;00:58.18&quot;,
+        &quot;lyrics&quot;: &quot;That morning coffee, brewed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:00.56&quot;,
+        &quot;lyrics&quot;: &quot;One touch and I brand newed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:04.15&quot;,
+        &quot;lyrics&quot;: &quot;Now he&#x27;s thinkin&#x27; &#x27;bout me every night, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:07.73&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:10.04&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:12.30&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:14.48&quot;,
+        &quot;lyrics&quot;: &quot;Move it up, down, left, right, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:16.84&quot;,
+        &quot;lyrics&quot;: &quot;Switch it up like Nintendo&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:19.19&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:21.53&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:24.28&quot;,
+        &quot;lyrics&quot;: &quot;(Holy shit)&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:26.02&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:28.46&quot;,
+        &quot;lyrics&quot;: &quot;I&#x27;m working late &#x27;cause I&#x27;m a singer&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:33.35&quot;,
+        &quot;lyrics&quot;: &quot;Oh, he looks so cute wrapped around my finger&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:37.86&quot;,
+        &quot;lyrics&quot;: &quot;My twisted humor, make him laugh so often&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:42.52&quot;,
+        &quot;lyrics&quot;: &quot;My honey bee, come and get this pollen&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:46.45&quot;,
+        &quot;lyrics&quot;: &quot;Too bad your ex don&#x27;t do it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:48.73&quot;,
+        &quot;lyrics&quot;: &quot;Walked in and dream came trued it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:51.12&quot;,
+        &quot;lyrics&quot;: &quot;Soft skin and I perfumed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:55.84&quot;,
+        &quot;lyrics&quot;: &quot;I know I Mountain Dew it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;01:57.90&quot;,
+        &quot;lyrics&quot;: &quot;That morning coffee, brewed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:00.50&quot;,
+        &quot;lyrics&quot;: &quot;One touch and I brand newed it for ya&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:04.21&quot;,
+        &quot;lyrics&quot;: &quot;Now he&#x27;s thinkin&#x27; &#x27;bout me every night, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:07.52&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:09.63&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:12.09&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:14.48&quot;,
+        &quot;lyrics&quot;: &quot;Move it up, down, left, right, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:16.77&quot;,
+        &quot;lyrics&quot;: &quot;Switch it up like Nintendo&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:19.05&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:21.30&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:23.64&quot;,
+        &quot;lyrics&quot;: &quot;He&#x27;s thinkin&#x27; &#x27;bout me every night, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:25.95&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:28.36&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:30.49&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:32.78&quot;,
+        &quot;lyrics&quot;: &quot;Move it up, down, left, right, oh&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:35.20&quot;,
+        &quot;lyrics&quot;: &quot;Switch it up like Nintendo&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:37.69&quot;,
+        &quot;lyrics&quot;: &quot;Say you can&#x27;t sleep, baby, I know&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:39.96&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:44.34&quot;,
+        &quot;lyrics&quot;: &quot;Is it that sweet? I guess so&quot;
+    },
+    {
+        &quot;time&quot;: &quot;02:49.19&quot;,
+        &quot;lyrics&quot;: &quot;That&#x27;s that me, espresso&quot;
+    }
+]"></p>
+        </div>
+     </div>
+    </div>
+    
+    
+    
+.
+   </body>
+  </html>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js">
+  </script>
+  <script src="/static/script.js">
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const audio = document.getElementById('fc-media');  // Replace with the actual ID of your audio element
+        const lyricsContainer = document.getElementById('song-lyrics');
+        let currentLyricIndex = 0;
+
+        // Retrieve the lyrics data as a JSON string
+        const lyricsData = JSON.parse(document.getElementById('song-lyrics').getAttribute('data-lyrics'));
+
+        audio.addEventListener('timeupdate', function () {
+          const currentTime = audio.currentTime;
+
+          // Find the current lyrics based on the time
+          while (currentLyricIndex < lyricsData.length - 1 && currentTime >= timeToSeconds(lyricsData[currentLyricIndex + 1].time)) {
+            currentLyricIndex++;
+          }
+
+          // Update the displayed lyrics
+          lyricsContainer.innerText = lyricsData[currentLyricIndex].lyrics;
+        });
+
+        function timeToSeconds(time) {
+          const [minutes, seconds] = time.split(':').map(parseFloat);
+          return minutes * 60 + seconds;
+        }
+      });
+
+  </script>
+  
+ </body>
+</html>
