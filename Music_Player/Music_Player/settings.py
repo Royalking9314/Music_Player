@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Buzz',
+    'https://buzz-00kp.onrender.com',
 ]
 
 MIDDLEWARE = [
