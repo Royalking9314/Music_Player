@@ -8,7 +8,20 @@
    </head>
    <body>
     
- 
+  <!-- Audio Visualizer Canvas Background -->
+  <canvas id="visualizer-canvas"></canvas>
+
+  <!-- Visualizer Controls -->
+  <div class="visualizer-controls">
+    <button id="toggle-visualizer" class="control-btn" title="Toggle Visualizer">
+      <i class="fa fa-eye"></i>
+    </button>
+    <select id="visualizer-style" class="control-select">
+      <option value="bars">Bars</option>
+      <option value="circular">Circular</option>
+      <option value="waveform">Waveform</option>
+    </select>
+  </div>
     
       <div class="music-player">
         {% for item in page_obj %}
@@ -36,7 +49,7 @@
        </center>
        
        <div class="lecteur">
-        <audio class="fc-media" id="fc-media">
+        <audio class="fc-media" id="fc-media" crossorigin="anonymous">
          <source src="{% if item.audio_file %}{{item.audio_file.url}} {% else %} {{item.audio_link}} {% endif %}" type="audio/mp3"/>
         </audio>
        </div>
@@ -44,11 +57,15 @@
     
 
     <div class="right-section">
-      <div class="lyrics-container">
-        <div class="lyrics">
-            <p id="song-lyrics" class="song-lyrics" data-lyrics="{{item.lyrics}}"></p>
-        </div>
-     </div>
+      <!-- Synchronized Lyrics Container -->
+      <div id="lyrics-display" class="lyrics-display">
+        <div class="lyrics-line previous"></div>
+        <div class="lyrics-line current"></div>
+        <div class="lyrics-line next"></div>
+      </div>
+      
+      <!-- Hidden data attribute for song ID -->
+      <div id="song-data" data-song-id="{{item.id}}" style="display:none;"></div>
     </div>
     
     
