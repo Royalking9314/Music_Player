@@ -228,7 +228,12 @@ class AudioVisualizer {
             
             this.ctx.fillStyle = gradient;
             this.ctx.beginPath();
-            this.ctx.roundRect(x, y, barWidth, barHeight, 2);
+            // Use roundRect if available, otherwise fallback to regular rect
+            if (this.ctx.roundRect) {
+                this.ctx.roundRect(x, y, barWidth, barHeight, 2);
+            } else {
+                this.ctx.rect(x, y, barWidth, barHeight);
+            }
             this.ctx.fill();
             
             // Add glow effect for high values

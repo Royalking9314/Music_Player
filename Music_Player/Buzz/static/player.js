@@ -229,8 +229,11 @@ class MusicPlayer {
      */
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            // Ignore if typing in input field
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            // Ignore if typing in input field, textarea, or contenteditable element
+            if (e.target.tagName === 'INPUT' || 
+                e.target.tagName === 'TEXTAREA' ||
+                e.target.isContentEditable ||
+                e.target.getAttribute('role') === 'textbox') {
                 return;
             }
             
@@ -603,15 +606,24 @@ class MusicPlayer {
         
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `
-            <span>${message}</span>
-            <button class="toast-close" onclick="this.parentElement.remove()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
+        
+        // Create message span with textContent to prevent XSS
+        const messageSpan = document.createElement('span');
+        messageSpan.textContent = message;
+        
+        // Create close button
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'toast-close';
+        closeBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
         `;
+        closeBtn.addEventListener('click', () => toast.remove());
+        
+        toast.appendChild(messageSpan);
+        toast.appendChild(closeBtn);
         
         container.appendChild(toast);
         
