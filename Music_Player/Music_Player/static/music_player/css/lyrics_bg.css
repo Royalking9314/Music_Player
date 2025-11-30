@@ -1,0 +1,79 @@
+/* Full-screen animated background + lyrics overlay */
+html,body {
+  height: 100%;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+}
+
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  display: block;
+}
+
+/* UI sits on top */
+#player-ui {
+  position: relative;
+  z-index: 3;
+  pointer-events: none; /* allow clicks only where needed */
+}
+
+/* Controls area */
+.controls {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 4;
+  background: rgba(0,0,0,0.4);
+  padding: 10px;
+  border-radius: 8px;
+  pointer-events: auto;
+}
+
+/* Lyrics overlay centered */
+#lyrics-wrap {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#lyrics-lines {
+  max-width: 90%;
+  text-align: center;
+  line-height: 1.4;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.6));
+  max-height: 60vh;
+  overflow: hidden;
+}
+
+.lyric {
+  font-size: 2.0rem;
+  opacity: 0.35;
+  transition: opacity 250ms, transform 350ms;
+  transform: translateY(6px);
+  margin: 8px 0;
+}
+
+.lyric.current {
+  font-size: 2.6rem;
+  opacity: 1;
+  transform: translateY(0);
+  color: #ffef7f;
+  text-shadow: 0 6px 20px rgba(255,200,0,0.16), 0 2px 8px rgba(0,0,0,0.6);
+}
+
+/* smaller screens */
+@media (max-width: 600px) {
+  .lyric { font-size: 1.2rem; }
+  .lyric.current { font-size: 1.6rem; }
+}

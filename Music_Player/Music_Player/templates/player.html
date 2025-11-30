@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Music Player — Live Lyrics Background</title>
+  <link rel="stylesheet" href="{% static 'music_player/css/lyrics_bg.css' %}">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div id="player-ui">
+    <div class="controls">
+      <audio id="audio" controls crossorigin="anonymous">
+        <!-- Replace src with your media file (can be /media/... if served by Django) -->
+        <source src="{% static 'music_player/media/example.mp3' %}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <input type="file" id="lrc-file" accept=".lrc,.txt">
+      <button id="load-lrc-sample">Load sample LRC</button>
+    </div>
+
+    <div id="lyrics-wrap">
+      <div id="lyrics-lines"></div>
+    </div>
+  </div>
+
+  <script src="{% static 'music_player/js/lyrics_bg.js' %}"></script>
+</body>
+</html>
