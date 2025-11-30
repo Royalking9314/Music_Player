@@ -68,12 +68,12 @@
     ctx.fillStyle = `rgb(${r},${g},${b})`;
     ctx.fillRect(0,0,ww,wh);
 
-    let level = 0.12;
+    let level = 0.3;
     if (analyser && dataArray) {
       analyser.getByteFrequencyData(dataArray);
       let sum = 0;
       for (let i=0;i<dataArray.length;i++) sum += dataArray[i];
-      level = Math.min(1, (sum / dataArray.length) / 160);
+      level = Math.max(0.3, Math.min(1, (sum / dataArray.length) / 160));
     }
 
     for (let p of particles) {
@@ -87,16 +87,16 @@
 
       const size = p.size * (1 + level*2);
       ctx.beginPath();
-      const alpha = 0.12 + 0.6 * level * (0.6 + Math.abs(Math.sin(t + p.x * 0.001)));
+      const alpha = 0.4 + 0.5 * level * (0.6 + Math.abs(Math.sin(t + p.x * 0.001)));
       ctx.fillStyle = `hsla(${p.hue}, 90%, 60%, ${alpha})`;
       ctx.arc(p.x, p.y, size, 0, Math.PI*2);
       ctx.fill();
     }
 
-    if (level > 0.25) {
+    if (level > 0.15) {
       const rad = Math.min(ww, wh) * (0.15 + level*0.35);
       const grad = ctx.createRadialGradient(ww/2,wh/2, rad*0.1, ww/2,wh/2, rad);
-      grad.addColorStop(0, `rgba(255,220,180,${0.06 + level*0.35})`);
+      grad.addColorStop(0, `rgba(255,220,180,${0.08 + level*0.35})`);
       grad.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0,0,ww,wh);
