@@ -95,68 +95,164 @@
             border: none;
         }
 
-        /* Album Art Section */
+        /* Album Art Section - Vinyl Record Style */
         .album-art-container {
             position: relative;
             width: 100%;
             aspect-ratio: 1;
             margin-bottom: 25px;
-            border-radius: 20px;
+            border-radius: 50%;
+            overflow: visible;
+            perspective: 1000px;
+        }
+
+        .vinyl-disc {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at center, #111 0%, #111 15%, transparent 15.5%),
+                radial-gradient(circle at center, #222 30%, #1a1a1a 31%, #222 32%, #1a1a1a 33%),
+                repeating-radial-gradient(circle at center, #1a1a1a 0px, #222 2px, #1a1a1a 4px);
+            box-shadow: 
+                0 0 0 8px #111,
+                0 0 0 10px #333,
+                0 15px 40px rgba(0, 0, 0, 0.6);
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+
+        .vinyl-disc.spinning {
+            animation: vinylSpin 3s linear infinite;
+        }
+
+        @keyframes vinylSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .album-art-wrapper {
+            position: absolute;
+            width: 55%;
+            height: 55%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         .album-art {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
 
         .album-art-container:hover .album-art {
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
-        /* Mini EQ Overlay */
-        .mini-eq-overlay {
+        /* Vinyl center hole */
+        .vinyl-center {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 3px;
-            padding: 10px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            width: 12%;
+            height: 12%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #333, #111);
+            border: 2px solid #444;
+            z-index: 3;
+        }
+
+        /* Neon glow ring */
+        .neon-ring {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            top: -5%;
+            left: -5%;
+            border-radius: 50%;
+            border: 2px solid transparent;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
-        .mini-eq-overlay.playing {
+        .neon-ring.active {
             opacity: 1;
+            border-color: var(--teal);
+            box-shadow: 
+                0 0 10px var(--teal),
+                0 0 20px var(--teal),
+                0 0 40px var(--teal),
+                inset 0 0 10px rgba(29, 211, 176, 0.2);
+            animation: neonPulse 2s ease-in-out infinite;
         }
 
-        .mini-eq-bar {
-            width: 4px;
-            background: linear-gradient(to top, var(--green), var(--teal));
-            border-radius: 2px;
-            animation: miniEqPulse 0.5s ease-in-out infinite alternate;
+        @keyframes neonPulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 10px var(--teal),
+                    0 0 20px var(--teal),
+                    0 0 40px var(--teal),
+                    inset 0 0 10px rgba(29, 211, 176, 0.2);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 15px var(--orange),
+                    0 0 30px var(--orange),
+                    0 0 60px var(--orange),
+                    inset 0 0 15px rgba(244, 162, 97, 0.3);
+                border-color: var(--orange);
+            }
         }
 
-        @keyframes miniEqPulse {
-            0% { height: 5px; }
-            100% { height: 35px; }
+        /* Now Playing Badge */
+        .now-playing-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(230, 57, 70, 0.2), rgba(244, 162, 97, 0.2));
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
         }
 
-        .mini-eq-bar:nth-child(2) { animation-delay: 0.1s; }
-        .mini-eq-bar:nth-child(3) { animation-delay: 0.2s; }
-        .mini-eq-bar:nth-child(4) { animation-delay: 0.3s; }
-        .mini-eq-bar:nth-child(5) { animation-delay: 0.15s; }
-        .mini-eq-bar:nth-child(6) { animation-delay: 0.25s; }
-        .mini-eq-bar:nth-child(7) { animation-delay: 0.05s; }
-        .mini-eq-bar:nth-child(8) { animation-delay: 0.35s; }
+        .now-playing-badge.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .now-playing-badge .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--warm-red);
+            border-radius: 50%;
+            animation: badgePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .now-playing-badge .badge-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--orange);
+        }
 
         /* Song Info */
         .song-info {
@@ -164,19 +260,65 @@
             margin-bottom: 25px;
         }
 
+        .song-title-wrapper {
+            overflow: hidden;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
         .song-title {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 5px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: inline-block;
+        }
+
+        .song-title.marquee {
+            animation: marqueeScroll 8s linear infinite;
+        }
+
+        @keyframes marqueeScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
         .song-artist {
             font-size: 1rem;
             color: var(--text-secondary);
             font-weight: 300;
+        }
+
+        /* Animated Equalizer Bars in Song Info */
+        .song-eq-bars {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+            margin-top: 10px;
+            height: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .song-eq-bars.visible {
+            opacity: 1;
+        }
+
+        .song-eq-bars .eq-bar {
+            width: 3px;
+            background: linear-gradient(to top, var(--warm-red), var(--orange));
+            border-radius: 2px;
+            animation: eqBarBounce 0.5s ease-in-out infinite alternate;
+        }
+
+        .song-eq-bars .eq-bar:nth-child(1) { animation-delay: 0s; }
+        .song-eq-bars .eq-bar:nth-child(2) { animation-delay: 0.1s; }
+        .song-eq-bars .eq-bar:nth-child(3) { animation-delay: 0.2s; }
+        .song-eq-bars .eq-bar:nth-child(4) { animation-delay: 0.15s; }
+        .song-eq-bars .eq-bar:nth-child(5) { animation-delay: 0.25s; }
+
+        @keyframes eqBarBounce {
+            0% { height: 4px; }
+            100% { height: 18px; }
         }
 
         /* Frequency Display */
@@ -190,6 +332,14 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 30px;
             align-self: center;
+            border: 1px solid rgba(29, 211, 176, 0.2);
+            box-shadow: 0 0 15px rgba(29, 211, 176, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .frequency-display:hover {
+            border-color: rgba(29, 211, 176, 0.4);
+            box-shadow: 0 0 25px rgba(29, 211, 176, 0.2);
         }
 
         .frequency-icon {
@@ -569,38 +719,48 @@
     <div class="main-container">
         <!-- Left Panel - Player Controls -->
         <div class="left-panel glass-panel">
-            <!-- Album Art -->
+            <!-- Album Art - Vinyl Record Style -->
             <div class="album-art-container">
-                {% if page_obj %}
-                    {% for item in page_obj %}
-                        <img src="{{ item.image.url }}" alt="Album Art" class="album-art" id="album-art">
-                    {% endfor %}
-                {% else %}
-                    <img src="https://via.placeholder.com/400x400/1a1a1a/ffffff?text=No+Album+Art" alt="Album Art" class="album-art" id="album-art">
-                {% endif %}
-                <div class="mini-eq-overlay" id="mini-eq">
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
-                    <div class="mini-eq-bar"></div>
+                <div class="neon-ring" id="neon-ring"></div>
+                <div class="vinyl-disc" id="vinyl-disc"></div>
+                <div class="album-art-wrapper">
+                    {% if page_obj %}
+                        {% for item in page_obj %}
+                            <img src="{{ item.image.url }}" alt="Album Art" class="album-art" id="album-art">
+                        {% endfor %}
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x400/1a1a1a/ffffff?text=No+Album+Art" alt="Album Art" class="album-art" id="album-art">
+                    {% endif %}
                 </div>
+                <div class="vinyl-center"></div>
             </div>
 
             <!-- Song Info -->
             <div class="song-info">
+                <div class="now-playing-badge" id="now-playing-badge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">Now Playing</span>
+                </div>
                 {% if page_obj %}
                     {% for item in page_obj %}
-                        <h1 class="song-title" id="song-title">{{ item.title }}</h1>
+                        <div class="song-title-wrapper">
+                            <h1 class="song-title" id="song-title">{{ item.title }}</h1>
+                        </div>
                         <p class="song-artist" id="song-artist">{{ item.artist }}</p>
                     {% endfor %}
                 {% else %}
-                    <h1 class="song-title" id="song-title">Select a Song</h1>
+                    <div class="song-title-wrapper">
+                        <h1 class="song-title" id="song-title">Select a Song</h1>
+                    </div>
                     <p class="song-artist" id="song-artist">Unknown Artist</p>
                 {% endif %}
+                <div class="song-eq-bars" id="song-eq-bars">
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                    <div class="eq-bar"></div>
+                </div>
             </div>
 
             <!-- Frequency Display -->
@@ -738,9 +898,15 @@
             const volumeIcon = document.getElementById('volume-icon');
             const volumeValue = document.getElementById('volume-value');
             const frequencyValue = document.getElementById('frequency-value');
-            const miniEq = document.getElementById('mini-eq');
             const lyricsContent = document.getElementById('lyrics-content');
             const modeBtns = document.querySelectorAll('.mode-btn');
+            
+            // New unique UI elements
+            const vinylDisc = document.getElementById('vinyl-disc');
+            const neonRing = document.getElementById('neon-ring');
+            const nowPlayingBadge = document.getElementById('now-playing-badge');
+            const songEqBars = document.getElementById('song-eq-bars');
+            const songTitle = document.getElementById('song-title');
 
             // Audio Context & Analyser
             let audioContext = null;
@@ -812,12 +978,20 @@
                     audioPlayer.pause();
                     playBtn.querySelector('i').className = 'fas fa-play';
                     playBtn.classList.remove('playing');
-                    miniEq.classList.remove('playing');
+                    // Deactivate unique UI elements
+                    vinylDisc.classList.remove('spinning');
+                    neonRing.classList.remove('active');
+                    nowPlayingBadge.classList.remove('visible');
+                    songEqBars.classList.remove('visible');
                 } else {
                     audioPlayer.play();
                     playBtn.querySelector('i').className = 'fas fa-pause';
                     playBtn.classList.add('playing');
-                    miniEq.classList.add('playing');
+                    // Activate unique UI elements
+                    vinylDisc.classList.add('spinning');
+                    neonRing.classList.add('active');
+                    nowPlayingBadge.classList.add('visible');
+                    songEqBars.classList.add('visible');
                 }
                 isPlaying = !isPlaying;
             });
@@ -879,8 +1053,12 @@
                 isPlaying = false;
                 playBtn.querySelector('i').className = 'fas fa-play';
                 playBtn.classList.remove('playing');
-                miniEq.classList.remove('playing');
                 progressBar.style.width = '0%';
+                // Deactivate unique UI elements
+                vinylDisc.classList.remove('spinning');
+                neonRing.classList.remove('active');
+                nowPlayingBadge.classList.remove('visible');
+                songEqBars.classList.remove('visible');
             });
 
             // Set initial volume
