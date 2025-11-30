@@ -698,6 +698,14 @@
         <audio id="audio-player" crossorigin="anonymous"></audio>
     {% endif %}
 
+    <!-- Hidden Pagination Links for Navigation -->
+    {% if page_obj %}
+        <nav style="display: none;">
+            <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}" title="Previous Page" id="prev-page-link"></a>
+            <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}" title="Next Page" id="next-page-link"></a>
+        </nav>
+    {% endif %}
+
     <script>
         // ============================================
         // Audio Visualizer & Player JavaScript
@@ -816,15 +824,15 @@
 
             // Navigation buttons
             prevBtn.addEventListener('click', () => {
-                const prevPage = document.querySelector('a[title="Previous Page"]');
-                if (prevPage && prevPage.href) {
+                const prevPage = document.getElementById('prev-page-link');
+                if (prevPage && prevPage.href && !prevPage.href.endsWith(window.location.pathname)) {
                     window.location.href = prevPage.href;
                 }
             });
 
             nextBtn.addEventListener('click', () => {
-                const nextPage = document.querySelector('a[title="Next Page"]');
-                if (nextPage && nextPage.href) {
+                const nextPage = document.getElementById('next-page-link');
+                if (nextPage && nextPage.href && !nextPage.href.endsWith(window.location.pathname)) {
                     window.location.href = nextPage.href;
                 }
             });
@@ -1190,15 +1198,26 @@
                 if (!lyricsContent) return;
                 
                 const lyricsData = lyricsContent.getAttribute('data-lyrics');
-                if (!lyricsData) return;
+                if (!lyricsData || lyricsData.trim() === '') return;
                 
                 try {
                     const lyrics = JSON.parse(lyricsData);
+                    
+                    // Validate the parsed data is an array
+                    if (!Array.isArray(lyrics)) {
+                        console.log('Lyrics data is not in expected array format');
+                        return;
+                    }
                     
                     // Clear container and populate with lyrics
                     lyricsContent.innerHTML = '';
                     
                     lyrics.forEach((item, index) => {
+                        // Validate each item has required properties
+                        if (!item || typeof item.lyrics !== 'string' || typeof item.time !== 'string') {
+                            return; // Skip invalid entries
+                        }
+                        
                         const line = document.createElement('p');
                         line.className = 'lyrics-line';
                         line.textContent = item.lyrics;
