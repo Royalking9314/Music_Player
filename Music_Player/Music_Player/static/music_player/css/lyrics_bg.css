@@ -1,0 +1,12 @@
+/* Pointer events for live-lyrics player */
+#bg-canvas {
+    pointer-events: none;
+}
+
+#player-ui {
+    pointer-events: auto;
+}
+
+#lyrics-wrap {
+    pointer-events: none;
+}
