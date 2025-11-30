@@ -2,59 +2,108 @@
 
 <!DOCTYPE html>
 <html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>
-   music player
-  </title>
-  <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet"/>
-  <link href="{% static './style.css' %}" rel="stylesheet"/>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Buzz Music Player</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Modern UI Styles -->
+    <link href="{% static 'modern-ui.css' %}" rel="stylesheet"/>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="app-background"></div>
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <!-- Keyboard Shortcut Hint -->
+    <div id="keyboard-hint" class="keyboard-shortcuts-hint"></div>
+    
+    <!-- Main App Container -->
+    <div class="app-container">
+        {% include 'main.html' %}
+    </div>
+    
+    <!-- Scripts -->
+    <script src="{% static 'visualizer.js' %}"></script>
+    <script src="{% static 'player.js' %}"></script>
+    
+    <!-- Synced Lyrics Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const audio = document.getElementById('audio-player');
+            const lyricsContainer = document.getElementById('lyrics-content');
+            
+            if (!audio || !lyricsContainer) return;
+            
+            let currentLyricIndex = 0;
+            const lyricsDataAttr = lyricsContainer.getAttribute('data-lyrics');
+            
+            // Check if lyrics data exists and is valid JSON array
+            if (!lyricsDataAttr) return;
+            
+            let lyricsData;
+            try {
+                lyricsData = JSON.parse(lyricsDataAttr);
+                if (!Array.isArray(lyricsData) || lyricsData.length === 0) {
+                    return;
+                }
+            } catch (e) {
+                // Lyrics are plain text, not synced
+                lyricsContainer.innerHTML = `<p class="lyrics-line">${lyricsDataAttr}</p>`;
+                return;
+            }
+            
+            // Render initial lyrics
+            renderLyrics(lyricsData);
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia">
+            audio.addEventListener('timeupdate', function () {
+                const currentTime = audio.currentTime;
 
- </head>
- <body>
+                // Find the current lyrics based on the time
+                let newIndex = 0;
+                for (let i = 0; i < lyricsData.length; i++) {
+                    if (currentTime >= timeToSeconds(lyricsData[i].time)) {
+                        newIndex = i;
+                    }
+                }
 
-{% include 'main.html' %}
+                if (newIndex !== currentLyricIndex) {
+                    currentLyricIndex = newIndex;
+                    highlightCurrentLyric(currentLyricIndex);
+                }
+            });
 
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js">
-  </script>
-  <script src="{% static './script.js' %}">
-  </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const audio = document.getElementById('fc-media');  // Replace with the actual ID of your audio element
-        const lyricsContainer = document.getElementById('song-lyrics');
-        let currentLyricIndex = 0;
-
-        // Retrieve the lyrics data as a JSON string
-        const lyricsData = JSON.parse(document.getElementById('song-lyrics').getAttribute('data-lyrics'));
-
-        audio.addEventListener('timeupdate', function () {
-          const currentTime = audio.currentTime;
-
-          // Find the current lyrics based on the time
-          while (currentLyricIndex < lyricsData.length - 1 && currentTime >= timeToSeconds(lyricsData[currentLyricIndex + 1].time)) {
-            currentLyricIndex++;
-          }
-
-          // Update the displayed lyrics
-          lyricsContainer.innerText = lyricsData[currentLyricIndex].lyrics;
+            function timeToSeconds(time) {
+                const [minutes, seconds] = time.split(':').map(parseFloat);
+                return minutes * 60 + seconds;
+            }
+            
+            function renderLyrics(data) {
+                lyricsContainer.innerHTML = data.map((item, index) => 
+                    `<p class="lyrics-line" data-index="${index}">${item.lyrics}</p>`
+                ).join('');
+            }
+            
+            function highlightCurrentLyric(index) {
+                const lines = lyricsContainer.querySelectorAll('.lyrics-line');
+                lines.forEach((line, i) => {
+                    line.classList.toggle('active-line', i === index);
+                });
+                
+                // Scroll to current lyric
+                const activeLine = lines[index];
+                if (activeLine) {
+                    activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         });
-
-        function timeToSeconds(time) {
-          const [minutes, seconds] = time.split(':').map(parseFloat);
-          return minutes * 60 + seconds;
-        }
-      });
-
-  </script>
-  
- </body>
+    </script>
+</body>
 </html>
