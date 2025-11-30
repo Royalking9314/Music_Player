@@ -845,14 +845,15 @@
                 <span class="frequency-display" id="frequency-display">0 Hz</span>
             </div>
 
+            {% with current_song=page_obj.0 %}
             <div class="album-section">
                 <div class="album-container">
                     <div class="vinyl-disc" id="vinyl-disc"></div>
-                    {% for item in page_obj %}
-                    <img class="album-art" id="album-art" src="{{item.image.url}}" alt="Album Art">
-                    {% empty %}
+                    {% if current_song %}
+                    <img class="album-art" id="album-art" src="{{current_song.image.url}}" alt="Album Art">
+                    {% else %}
                     <img class="album-art" id="album-art" src="https://via.placeholder.com/280x280/1a1a1a/888888?text=No+Album" alt="Album Art">
-                    {% endfor %}
+                    {% endif %}
                     <div class="mini-eq" id="mini-eq">
                         <div class="mini-eq-bar"></div>
                         <div class="mini-eq-bar"></div>
@@ -863,13 +864,13 @@
                 </div>
 
                 <div class="song-info">
-                    {% for item in page_obj %}
-                    <h1 class="song-title">{{item.title}}</h1>
-                    <p class="song-artist">{{item.artist}}</p>
-                    {% empty %}
+                    {% if current_song %}
+                    <h1 class="song-title">{{current_song.title}}</h1>
+                    <p class="song-artist">{{current_song.artist}}</p>
+                    {% else %}
                     <h1 class="song-title">No Song Selected</h1>
                     <p class="song-artist">Unknown Artist</p>
-                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -912,23 +913,24 @@
 
             <!-- Floating Lyrics -->
             <div class="lyrics-section">
-                {% for item in page_obj %}
-                <p class="floating-lyrics" id="floating-lyrics" data-lyrics="{{item.lyrics}}">&#9835; Music brings peace to the soul &#9835;</p>
-                {% empty %}
+                {% if current_song %}
+                <p class="floating-lyrics" id="floating-lyrics" data-lyrics="{{current_song.lyrics}}">&#9835; Music brings peace to the soul &#9835;</p>
+                {% else %}
                 <p class="floating-lyrics" id="floating-lyrics">&#9835; Music brings peace to the soul &#9835;</p>
-                {% endfor %}
+                {% endif %}
             </div>
 
             <!-- Hidden Audio Element -->
-            {% for item in page_obj %}
+            {% if current_song %}
             <audio id="audio-player" crossorigin="anonymous">
-                <source src="{% if item.audio_file %}{{item.audio_file.url}}{% else %}{{item.audio_link}}{% endif %}" type="audio/mpeg">
+                <source src="{% if current_song.audio_file %}{{current_song.audio_file.url}}{% else %}{{current_song.audio_link}}{% endif %}" type="audio/mpeg">
             </audio>
-            {% empty %}
+            {% else %}
             <audio id="audio-player" crossorigin="anonymous">
                 <source src="" type="audio/mpeg">
             </audio>
-            {% endfor %}
+            {% endif %}
+            {% endwith %}
         </main>
 
         <!-- Right Panel - Equalizer & Queue -->
@@ -1167,7 +1169,8 @@
                         }
                     }
                 } catch (e) {
-                    // If lyrics parsing fails, keep default text
+                    // Log error for debugging - lyrics format may be invalid JSON
+                    console.warn('Lyrics parsing failed:', e.message, '- Expected JSON array format');
                 }
             }
 
