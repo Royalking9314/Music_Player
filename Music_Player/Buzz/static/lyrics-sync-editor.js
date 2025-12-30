@@ -497,13 +497,13 @@ class LyricsSyncEditor {
                 // Update the data attribute
                 this.lyricsContainer.setAttribute('data-lyrics', JSON.stringify(this.syncedLyrics));
                 
-                // Exit edit mode
-                this.toggleEditMode();
+                // Exit edit mode and render the synced lyrics
+                this.isEditMode = false;
+                document.getElementById('edit-sync-btn').classList.remove('active');
+                document.getElementById('sync-controls').classList.add('hidden');
                 
-                // Reload page after short delay to show updated lyrics
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+                // Render the synced lyrics
+                this.renderPreview();
             } else {
                 this.showNotification(`Error: ${data.error}`, 'error');
             }

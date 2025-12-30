@@ -1,3 +1,4 @@
+{% load lyrics_filters %}
 {% for item in page_obj %}
 <!-- Main Content -->
 <main class="main-content">
@@ -130,7 +131,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div id="lyrics-content" class="lyrics-content" data-lyrics="{% if item.synced_lyrics %}{{ item.synced_lyrics|safe }}{% else %}{{ item.lyrics }}{% endif %}">
+            <div id="lyrics-content" class="lyrics-content" data-lyrics="{% if item.synced_lyrics %}{{ item.synced_lyrics|jsonify }}{% else %}{{ item.lyrics }}{% endif %}">
                 {% if item.synced_lyrics %}
                     {# Synced lyrics will be rendered by JavaScript #}
                 {% elif item.lyrics %}

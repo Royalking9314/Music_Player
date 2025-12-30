@@ -11,12 +11,6 @@ def index(request):
     paginator = Paginator(Song.objects.all(), 1)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    # Convert synced_lyrics to JSON string for template
-    for song in page_obj:
-        if song.synced_lyrics:
-            song.synced_lyrics = json.dumps(song.synced_lyrics)
-    
     context = {'page_obj': page_obj}
     return render(request, 'index.html', context)
 
