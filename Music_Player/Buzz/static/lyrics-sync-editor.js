@@ -562,7 +562,7 @@ class LyricsSyncEditor {
         const index = parseInt(element.getAttribute('data-index'));
         const currentTime = element.textContent.replace(/[\[\]]/g, '');
         
-        element.addEventListener('blur', () => {
+        const handleBlur = () => {
             const newTime = element.textContent.replace(/[\[\]]/g, '').trim();
             if (this.isValidTimeFormat(newTime)) {
                 this.syncedLyrics[index].time = newTime;
@@ -571,7 +571,11 @@ class LyricsSyncEditor {
                 element.textContent = `[${currentTime}]`;
                 this.showNotification('Invalid time format. Use mm:ss.ss', 'error');
             }
-        });
+            // Remove event listener after handling
+            element.removeEventListener('blur', handleBlur);
+        };
+        
+        element.addEventListener('blur', handleBlur, { once: true });
     }
     
     /**
