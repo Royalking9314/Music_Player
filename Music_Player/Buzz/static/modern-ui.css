@@ -859,3 +859,249 @@ body {
 .icon-md { width: 20px; height: 20px; }
 .icon-lg { width: 24px; height: 24px; }
 .icon-xl { width: 32px; height: 32px; }
+
+/* ===========================
+   Lyrics Sync Editor Styles
+   =========================== */
+
+/* Edit Sync Button */
+.edit-sync-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--accent-gradient);
+    color: var(--text-primary);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md);
+}
+
+.edit-sync-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg), var(--accent-glow);
+}
+
+.edit-sync-btn.active {
+    background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+}
+
+.edit-sync-btn svg {
+    flex-shrink: 0;
+}
+
+/* Sync Controls Panel */
+.sync-controls {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    transition: all var(--transition-normal);
+}
+
+.sync-controls.hidden {
+    display: none;
+}
+
+.sync-controls-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.sync-instructions {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Sync Control Actions */
+.sync-controls-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.sync-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.sync-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.sync-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.sync-btn svg {
+    flex-shrink: 0;
+}
+
+.sync-btn.primary {
+    background: var(--accent-gradient);
+    border-color: transparent;
+}
+
+.sync-btn.primary:not(:disabled):hover {
+    box-shadow: var(--shadow-md), var(--accent-glow);
+}
+
+.sync-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.sync-btn.success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: transparent;
+}
+
+.sync-btn.success:not(:disabled):hover {
+    box-shadow: var(--shadow-md), 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.sync-btn.danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-color: transparent;
+}
+
+.sync-btn.danger:not(:disabled):hover {
+    box-shadow: var(--shadow-md), 0 0 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Sync Progress */
+.sync-progress {
+    margin-top: var(--spacing-md);
+}
+
+#sync-progress-text {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.sync-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.sync-progress-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+}
+
+/* Editable Lyrics Lines */
+.lyrics-line-edit {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.lyrics-line-edit:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.lyrics-line-edit.current-line {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-left: 3px solid var(--accent-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.lyrics-line-edit.synced {
+    border-left: 3px solid #10b981;
+}
+
+.lyrics-line-edit.unsynced {
+    border-left: 3px solid var(--text-muted);
+}
+
+.timestamp-edit {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.1);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    min-width: 80px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.timestamp-edit:hover {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.timestamp-edit:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+.lyrics-line-edit.synced .timestamp-edit {
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.lyrics-line-edit.unsynced .timestamp-edit {
+    color: var(--text-muted);
+    background: rgba(113, 113, 122, 0.1);
+}
+
+.lyrics-text {
+    flex: 1;
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* Responsive Design for Sync Editor */
+@media (max-width: 768px) {
+    .sync-controls-actions {
+        flex-direction: column;
+    }
+    
+    .sync-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .edit-sync-btn {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+}

@@ -110,7 +110,7 @@
     
     <!-- Lyrics Section -->
     <section class="lyrics-section">
-        <div class="lyrics-card glass-container fade-in">
+        <div class="lyrics-card glass-container fade-in" data-song-id="{{ item.id }}">
             <div class="lyrics-header">
                 <h2 class="lyrics-title">Lyrics</h2>
                 <div class="nav-controls">
@@ -130,8 +130,10 @@
                     {% endif %}
                 </div>
             </div>
-            <div id="lyrics-content" class="lyrics-content" data-lyrics="{{ item.lyrics }}">
-                {% if item.lyrics %}
+            <div id="lyrics-content" class="lyrics-content" data-lyrics="{% if item.synced_lyrics %}{{ item.synced_lyrics|safe }}{% else %}{{ item.lyrics }}{% endif %}">
+                {% if item.synced_lyrics %}
+                    {# Synced lyrics will be rendered by JavaScript #}
+                {% elif item.lyrics %}
                     <p class="lyrics-line">{{ item.lyrics }}</p>
                 {% else %}
                     <p class="lyrics-line" style="color: var(--text-muted);">No lyrics available for this song.</p>
