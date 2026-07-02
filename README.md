@@ -1,88 +1,158 @@
-# Buzz Music Player
+<div align="center">
+  <h1>🎵 Buzz Music Player</h1>
+  <p>
+	 <b>A Django-based music player with a modern audio interface, lyrics display, and live visualizer modes.</b>
+  </p>
 
-Buzz Music Player is a Django-based music player web app with a custom front end for browsing songs, playing audio, viewing album art, reading lyrics, and switching between multiple audio visualizations.
+  <p>
+	 <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django" />
+	 <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+	 <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+	 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  </p>
+</div>
 
-## Features
+---
 
-- Song library powered by a Django `Song` model
-- Album art, artist name, title, and lyrics display
-- Audio playback with play/pause, seek, volume, shuffle, and repeat controls
-- Three visualizer modes: bars, waveform, and circular
-- Keyboard shortcuts for playback and navigation
-- Pagination-based navigation between songs
-- Django admin support for managing songs
-- Static and media file handling for images and audio uploads
+## 📖 Overview
 
-## Tech Stack
+**Buzz Music Player** is a single-app Django project that renders a polished music player UI backed by a `Song` model. The app presents one track at a time with pagination, shows album art and lyrics, and uses a custom JavaScript player to handle playback controls, keyboard shortcuts, volume management, and audio visualizations.
+
+The experience is built around a dark, glassmorphism-style interface and a Web Audio API visualizer with three display modes: bars, waveform, and circular.
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🎧 **Audio Playback** | Play, pause, seek, mute, adjust volume, and repeat the current song. |
+| 🖼️ **Track Details** | Display title, artist, album art, and optional lyrics for each song. |
+| 📚 **Song Pagination** | Browse tracks one at a time using previous/next navigation. |
+| 🌈 **Live Visualizer** | Render audio as bars, waveform, or circular visualization. |
+| ⌨️ **Keyboard Shortcuts** | Control playback with Space, arrow keys, `M`, `F`, and number keys. |
+| 🛠️ **Admin Management** | Add and manage songs through Django admin. |
+| 📁 **Media Support** | Store uploaded images and audio files under `media/`. |
+
+---
+
+## 🏗️ Architecture
+
+Buzz Music Player uses a simple Django architecture with a single app and a custom front end.
+
+### 🎨 Frontend
+
+The UI is rendered with Django templates and enhanced by vanilla JavaScript:
+- `Buzz/templates/index.html` loads the app shell and visualizer scripts.
+- `Buzz/templates/main.html` renders the player, lyrics section, and floating controls.
+- `Buzz/static/modern-ui.css` provides the visual design and responsive layout.
+- `Buzz/static/player.js` manages playback, keyboard shortcuts, volume, and UI state.
+- `Buzz/static/visualizer.js` draws audio visualizations using the Web Audio API.
+
+### ⚙️ Backend
+
+The backend is a standard Django project:
+- `Song` is the core model and contains title, artist, image, lyrics, duration, audio file, and audio link fields.
+- `Buzz.views.index` paginates `Song` objects and sends the current track to the template.
+- `Buzz.admin` registers the `Song` model for admin management.
+- SQLite is used as the default database through `db.sqlite3`.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
 
 - Python 3
-- Django 5.2
-- SQLite (default local database)
-- HTML, CSS, and vanilla JavaScript
-- Web Audio API for the visualizer
+- `pip`
+- A browser that supports the Web Audio API
 
-## Project Structure
+### Installation
 
-- `manage.py` - Django command-line entry point
-- `settings.py` - Project settings, static files, and media configuration
-- `urls.py` - Root URL routing
-- `Buzz/` - Main app containing the music player logic
-- `Buzz/models.py` - `Song` model definition
-- `Buzz/views.py` - Index view that paginates songs
-- `Buzz/templates/` - Django templates for the player UI
-- `Buzz/static/` - Styles and JavaScript for the player and visualizer
-- `media/` - Uploaded song and image files
+1. Clone the repository:
+	```bash
+	git clone https://github.com/DevRexxxx/Music_Player.git
+	cd Music_Player
+	```
 
-## Setup
-
-1. Create and activate a virtual environment.
 2. Install dependencies:
+	```bash
+	pip install -r requirements.txt
+	```
 
-```bash
-pip install -r requirements.txt
-```
+3. Run migrations:
+	```bash
+	python manage.py migrate
+	```
 
-3. Apply migrations:
+4. Create a superuser if you want to manage songs from the admin panel:
+	```bash
+	python manage.py createsuperuser
+	```
 
-```bash
-python manage.py migrate
-```
+---
 
-4. Create an admin user if you want to manage songs through Django admin:
+## 🖥️ Running the Application
 
-```bash
-python manage.py createsuperuser
-```
+1. Start the development server:
+	```bash
+	python manage.py runserver
+	```
 
-5. Start the development server:
+2. Open the app in your browser:
+	```text
+	http://127.0.0.1:8000/
+	```
 
-```bash
-python manage.py runserver
-```
+3. Optional: open the Django admin panel:
+	```text
+	http://127.0.0.1:8000/admin/
+	```
 
-Then open the site at `http://127.0.0.1:8000/`.
+---
 
-## Managing Songs
+## 🎵 Managing Songs
 
-Songs are displayed one at a time through pagination. Each `Song` can include:
+Each song is stored as a `Song` record and can include:
 
 - `title`
 - `artist`
 - `image`
 - `lyrics`
 - `duration`
-- `audio_file` or `audio_link`
+- `audio_file`
+- `audio_link`
 
-You can add and edit songs from the Django admin after registering a superuser.
+The current UI shows one song per page, so navigation buttons move through the song collection using Django pagination.
 
-## Media And Static Files
+---
 
-- Uploaded images and audio files are stored in `media/`
-- App assets are served from `Buzz/static/`
-- The player UI uses `player.js`, `visualizer.js`, and `modern-ui.css`
+## 📁 Project Structure
 
-## Notes
+- `manage.py` - Django command entry point
+- `settings.py` - Project settings, static files, and media configuration
+- `urls.py` - Root URL routing
+- `Buzz/` - Main application package
+- `Buzz/models.py` - `Song` model definition
+- `Buzz/views.py` - Index view and pagination logic
+- `Buzz/urls.py` - App URL routes
+- `Buzz/templates/` - Player templates
+- `Buzz/static/` - Styles and JavaScript assets
+- `media/` - Uploaded audio and image files
 
-- The default database is `db.sqlite3`.
-- The app is configured for local development with `DEBUG = True`.
-- If you add new songs, make sure the corresponding image and audio files are available in the media directory or via a valid audio URL.
+---
+
+## 🔧 Notes
+
+- The default database is SQLite (`db.sqlite3`).
+- Static files are served from `Buzz/static/`.
+- Media files are served from `media/`.
+- The project is configured for local development with `DEBUG = True`.
+- If a song has no uploaded audio file, the template falls back to the `audio_link` field.
+
+---
+
+<div align="center">
+  <br />
+  <p><i>Built for a smooth listening experience.</i></p>
+</div>
