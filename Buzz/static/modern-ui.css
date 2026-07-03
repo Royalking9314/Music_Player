@@ -224,6 +224,30 @@ body {
     font-weight: 500;
 }
 
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.help-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+    line-height: 1.4;
+}
+
+.help-text ul {
+    margin: var(--spacing-xs) 0 0;
+    padding-left: 1.2rem;
+}
+
+.help-text li {
+    margin-bottom: 2px;
+}
+
 .auth-btn {
     display: inline-flex;
     align-items: center;
