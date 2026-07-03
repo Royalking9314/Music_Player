@@ -161,15 +161,14 @@
         <div class="lyrics-card glass-container fade-in">
             <div class="lyrics-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h2 class="lyrics-title">Lyrics</h2>
-                <select id="lyrics-lang" style="padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: var(--text-primary); cursor: pointer; outline: none;">
-                    <option value="" style="background: var(--surface);">Original</option>
-                    <option value="es" style="background: var(--surface);">Spanish</option>
-                    <option value="fr" style="background: var(--surface);">French</option>
-                    <option value="de" style="background: var(--surface);">German</option>
-                    <option value="ja" style="background: var(--surface);">Japanese</option>
-                    <option value="hi" style="background: var(--surface);">Hindi</option>
+                <select id="lyrics-lang" style="color-scheme: dark; padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: var(--text-primary); cursor: pointer; outline: none;">
+                    <option value="" style="background: #1e1e2e; color: white;">Original</option>
+                    <option value="es" style="background: #1e1e2e; color: white;">Spanish</option>
+                    <option value="fr" style="background: #1e1e2e; color: white;">French</option>
+                    <option value="de" style="background: #1e1e2e; color: white;">German</option>
+                    <option value="ja" style="background: #1e1e2e; color: white;">Japanese</option>
+                    <option value="hi" style="background: #1e1e2e; color: white;">Hindi</option>
                 </select>
-            </div>
                 <div class="nav-controls">
                     {% if page_obj.has_previous %}
                     <a href="?page={{ page_obj.previous_page_number }}" class="nav-btn" title="Previous Song">
