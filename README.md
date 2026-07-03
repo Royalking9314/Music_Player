@@ -136,8 +136,8 @@ Music_Player/
 
 ```bash
 # Clone the repository
-git clone https://github.com/DevRexxxx/Music_Player.git
-cd Music_Player
+git clone https://github.com/DevRexxxx/Music_Player.git "Music Player"
+cd "Music Player"
 
 # Install dependencies
 pip install -r requirements.txt
