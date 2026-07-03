@@ -979,7 +979,14 @@ class MusicPlayer {
         try {
             const res = await fetch('/api/playlists/');
             if (!res.ok) return;
-            const playlists = await res.json();
+            let playlists = await res.json();
+            
+            // Handle DRF pagination object if it exists
+            if (playlists && Array.isArray(playlists.results)) {
+                playlists = playlists.results;
+            } else if (!Array.isArray(playlists)) {
+                playlists = [];
+            }
             
             container.innerHTML = playlists.map(p => 
                 `<div class="genre-chip" style="cursor:pointer;" onclick="musicPlayer.playPlaylist(${p.id})">
