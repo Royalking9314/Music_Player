@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Login — Buzz Music Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'modern-ui.css' %}" rel="stylesheet"/>
+</head>
+<body>
+    <div class="app-background"></div>
+    
+    <div class="auth-page">
+        <div class="auth-card glass-container slide-up">
+            <div class="auth-header">
+                <h1 class="auth-logo">🎵 Buzz</h1>
+                <p class="auth-subtitle">Welcome back</p>
+            </div>
+            
+            {% if messages %}
+            <div class="auth-messages">
+                {% for message in messages %}
+                <p class="auth-message {{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <form method="post" class="auth-form" novalidate>
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="auth-errors">
+                    {% for error in form.non_field_errors %}
+                    <p class="auth-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text" name="username" id="id_username" class="form-input" 
+                           placeholder="Enter your username" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" id="id_password" class="form-input" 
+                           placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="auth-submit-btn">Log In</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'buzz:register' %}" class="auth-link">Register</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Apply saved theme
+        const savedTheme = localStorage.getItem('buzz-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>

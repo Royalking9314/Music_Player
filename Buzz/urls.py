@@ -1,9 +1,20 @@
-from django.conf import settings
-from django.conf.urls import static
-from . import views
 from django.urls import path
+from . import views
+from . import api_views
 
-app_name='buzz'
-urlpatterns=[
+app_name = 'buzz'
+
+urlpatterns = [
+    # Page views
     path('', views.index, name='index'),
-]   
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+
+    # REST API
+    path('api/songs/', api_views.SongListAPI.as_view(), name='api-songs'),
+    path('api/songs/<int:pk>/', api_views.SongDetailAPI.as_view(), name='api-song-detail'),
+    path('api/genres/', api_views.GenreListAPI.as_view(), name='api-genres'),
+    path('api/favorites/', api_views.UserFavoritesAPI.as_view(), name='api-favorites'),
+    path('api/favorites/toggle/<int:song_id>/', api_views.toggle_favorite, name='api-toggle-favorite'),
+]

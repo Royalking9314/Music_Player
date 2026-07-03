@@ -1,11 +1,12 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Buzz Music Player</title>
+    <meta name="description" content="A modern music player with visualizer, synced lyrics, and queue management.">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Modern UI Styles -->
-    <link href="{% static 'modern-ui.css' %}" rel="stylesheet"/>
+    <link href="{% static 'modern-ui.css' %}?v=1.2" rel="stylesheet"/>
 </head>
 <body>
     <!-- Background Effects -->
@@ -25,14 +26,122 @@
     <!-- Keyboard Shortcut Hint -->
     <div id="keyboard-hint" class="keyboard-shortcuts-hint"></div>
     
+    <!-- Top Bar -->
+    <header class="top-bar glass-container">
+        <div class="top-bar-left">
+            <button id="sidebar-toggle" class="control-btn sidebar-toggle-btn" title="Toggle Sidebar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <h1 class="app-logo">🎵 Buzz</h1>
+        </div>
+        <div class="top-bar-right">
+            <!-- Theme Toggle -->
+            <button id="theme-toggle" class="control-btn theme-toggle-btn" title="Toggle Theme">
+                <svg id="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;" width="20" height="20">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg id="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            
+            <!-- Auth Links -->
+            {% if user.is_authenticated %}
+                <span class="user-greeting">{{ user.username }}</span>
+                <a href="{% url 'buzz:logout' %}" class="auth-btn">Logout</a>
+            {% else %}
+                <a href="{% url 'buzz:login' %}" class="auth-btn">Login</a>
+                <a href="{% url 'buzz:register' %}" class="auth-btn auth-btn-primary">Register</a>
+            {% endif %}
+        </div>
+    </header>
+
     <!-- Main App Container -->
     <div class="app-container">
-        {% include 'main.html' %}
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar glass-container">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">Library</h2>
+                <span class="song-count">{{ total_songs }} songs</span>
+            </div>
+            
+            <!-- Search -->
+            <div class="sidebar-search">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input id="sidebar-search" type="text" class="search-input" placeholder="Search songs..." value="{{ search_query }}">
+            </div>
+            
+            <!-- Genre Chips -->
+            <div class="genre-chips">
+                <a href="?{% if search_query %}search={{ search_query }}{% endif %}" 
+                   class="genre-chip {% if not active_genre %}active{% endif %}">All</a>
+                {% for genre in genres %}
+                <a href="?genre={{ genre.slug }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                   class="genre-chip {% if active_genre == genre.slug %}active{% endif %}"
+                   style="--chip-color: {{ genre.color }}">
+                    {{ genre.name }}
+                </a>
+                {% endfor %}
+            </div>
+            
+            <!-- Song List -->
+            <div id="song-list" class="song-list">
+                <!-- Loading skeleton -->
+                <div id="song-list-skeleton" class="song-list-skeleton" style="display:none;">
+                    {% for i in "12345" %}
+                    <div class="song-item-skeleton">
+                        <div class="skeleton" style="width:40px;height:40px;border-radius:8px;"></div>
+                        <div style="flex:1;">
+                            <div class="skeleton" style="width:70%;height:14px;margin-bottom:6px;"></div>
+                            <div class="skeleton" style="width:50%;height:12px;"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Populated by JavaScript -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="content-area">
+            {% include 'main.html' %}
+        </div>
     </div>
     
+    <!-- Hidden data for JS -->
+    <script id="songs-data" type="application/json">{{ songs_json|safe }}</script>
+    <script>
+        window.BUZZ_CONFIG = {
+            isAuthenticated: {% if user.is_authenticated %}true{% else %}false{% endif %},
+            csrfToken: '{{ csrf_token }}',
+            currentPage: {{ page_obj.number }},
+            totalPages: {{ page_obj.paginator.num_pages }},
+            hasNext: {% if page_obj.has_next %}true{% else %}false{% endif %},
+            hasPrev: {% if page_obj.has_previous %}true{% else %}false{% endif %},
+            nextPage: {% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}null{% endif %},
+            prevPage: {% if page_obj.has_previous %}{{ page_obj.previous_page_number }}{% else %}null{% endif %},
+        };
+    </script>
+    
     <!-- Scripts -->
-    <script src="{% static 'visualizer.js' %}"></script>
-    <script src="{% static 'player.js' %}"></script>
+    <script src="{% static 'visualizer.js' %}?v=1.2"></script>
+    <script src="{% static 'player.js' %}?v=1.2"></script>
     
     <!-- Synced Lyrics Script -->
     <script>

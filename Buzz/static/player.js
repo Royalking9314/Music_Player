@@ -1,6 +1,7 @@
 /**
  * Modern Music Player - Enhanced UI and Controls
- * Handles keyboard shortcuts, player controls, UI interactions, and toast notifications
+ * Handles keyboard shortcuts, player controls, UI interactions, toast notifications,
+ * sidebar, queue, auto-play, theme toggle, search, and favorites.
  */
 
 class MusicPlayer {
@@ -12,9 +13,18 @@ class MusicPlayer {
         this.previousVolume = 1;
         this.currentTime = 0;
         this.duration = 0;
+        this.sidebarOpen = window.innerWidth > 768;
+        
+        // Queue
+        this.songList = [];
+        this.queue = [];
+        this.queueIndex = -1;
         
         // DOM Elements
         this.elements = {};
+        
+        // Config
+        this.config = window.BUZZ_CONFIG || {};
         
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
@@ -29,11 +39,16 @@ class MusicPlayer {
      */
     init() {
         this.cacheElements();
+        this.loadSongList();
         this.setupAudio();
         this.setupVisualizer();
         this.setupEventListeners();
         this.setupKeyboardShortcuts();
+        this.setupThemeToggle();
+        this.setupSidebar();
+        this.setupFavorites();
         this.updateVolumeUI(1);
+        this.renderSongList();
         
         // Show welcome toast
         this.showToast('Welcome! Use Space to play/pause, Arrow keys to seek', 'info');
@@ -68,8 +83,8 @@ class MusicPlayer {
             playBtn: document.getElementById('play-btn'),
             playIcon: document.getElementById('play-icon'),
             pauseIcon: document.getElementById('pause-icon'),
-            prevBtn: document.getElementById('prev-btn'),
-            nextBtn: document.getElementById('next-btn'),
+            prevBtn: document.getElementById('prev-nav-btn'),
+            nextBtn: document.getElementById('next-nav-btn'),
             shuffleBtn: document.getElementById('shuffle-btn'),
             repeatBtn: document.getElementById('repeat-btn'),
             
@@ -104,8 +119,37 @@ class MusicPlayer {
             toastContainer: document.getElementById('toast-container'),
             
             // Keyboard hint
-            keyboardHint: document.getElementById('keyboard-hint')
+            keyboardHint: document.getElementById('keyboard-hint'),
+            
+            // Sidebar
+            sidebar: document.getElementById('sidebar'),
+            sidebarToggle: document.getElementById('sidebar-toggle'),
+            sidebarSearch: document.getElementById('sidebar-search'),
+            songListContainer: document.getElementById('song-list'),
+            
+            // Theme
+            themeToggle: document.getElementById('theme-toggle'),
+            themeSun: document.getElementById('theme-sun'),
+            themeMoon: document.getElementById('theme-moon'),
+            
+            // Favorite
+            favoriteBtn: document.getElementById('favorite-btn'),
         };
+    }
+    
+    /**
+     * Load song list from embedded JSON
+     */
+    loadSongList() {
+        try {
+            const dataEl = document.getElementById('songs-data');
+            if (dataEl) {
+                this.songList = JSON.parse(dataEl.textContent);
+                this.queue = [...this.songList];
+            }
+        } catch (e) {
+            console.warn('Could not load song list:', e);
+        }
     }
     
     /**
@@ -279,6 +323,12 @@ class MusicPlayer {
                     this.toggleFullscreen();
                     break;
                     
+                case 'KeyB':
+                    e.preventDefault();
+                    this.toggleSidebarVisibility();
+                    this.showKeyboardHint('Toggle Sidebar');
+                    break;
+                    
                 case 'Digit1':
                     this.setVisualizerMode('bars');
                     this.showKeyboardHint('Bars Mode');
@@ -296,6 +346,154 @@ class MusicPlayer {
             }
         });
     }
+    
+    // ===== THEME =====
+    
+    setupThemeToggle() {
+        // Load saved theme
+        const savedTheme = localStorage.getItem('buzz-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        this.updateThemeIcons(savedTheme);
+        
+        if (this.elements.themeToggle) {
+            this.elements.themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('buzz-theme', next);
+                this.updateThemeIcons(next);
+                this.showToast(`Switched to ${next} theme`, 'info');
+            });
+        }
+    }
+    
+    updateThemeIcons(theme) {
+        if (this.elements.themeSun && this.elements.themeMoon) {
+            this.elements.themeSun.style.display = theme === 'dark' ? 'none' : 'block';
+            this.elements.themeMoon.style.display = theme === 'dark' ? 'block' : 'none';
+        }
+    }
+    
+    // ===== SIDEBAR =====
+    
+    setupSidebar() {
+        // Sidebar toggle
+        if (this.elements.sidebarToggle) {
+            this.elements.sidebarToggle.addEventListener('click', () => this.toggleSidebarVisibility());
+        }
+        
+        // Search
+        if (this.elements.sidebarSearch) {
+            this.elements.sidebarSearch.addEventListener('input', (e) => {
+                this.filterSongList(e.target.value);
+            });
+        }
+    }
+    
+    toggleSidebarVisibility() {
+        this.sidebarOpen = !this.sidebarOpen;
+        if (this.elements.sidebar) {
+            this.elements.sidebar.classList.toggle('collapsed', !this.sidebarOpen);
+        }
+        document.querySelector('.content-area')?.classList.toggle('sidebar-collapsed', !this.sidebarOpen);
+    }
+    
+    renderSongList(songs = null) {
+        const list = songs || this.songList;
+        const container = this.elements.songListContainer;
+        if (!container) return;
+        
+        if (list.length === 0) {
+            container.innerHTML = '<div class="song-list-empty">No songs found</div>';
+            return;
+        }
+        
+        const currentPage = this.config.currentPage || 1;
+        
+        container.innerHTML = list.map((song, index) => {
+            const pageNum = this.songList.indexOf(song) + 1;
+            const isActive = pageNum === currentPage;
+            return `
+                <a href="?page=${pageNum}" class="song-item ${isActive ? 'active' : ''}" data-song-id="${song.id}">
+                    <img class="song-item-art" src="${song.image_url}" alt="${song.title}" loading="lazy">
+                    <div class="song-item-info">
+                        <div class="song-item-title">${song.title}</div>
+                        <div class="song-item-artist">${song.artist}</div>
+                    </div>
+                    ${song.is_favorite ? '<span class="song-item-heart">♥</span>' : ''}
+                </a>
+            `;
+        }).join('');
+    }
+    
+    filterSongList(query) {
+        const q = query.toLowerCase().trim();
+        if (!q) {
+            this.renderSongList();
+            return;
+        }
+        const filtered = this.songList.filter(s => 
+            s.title.toLowerCase().includes(q) || 
+            s.artist.toLowerCase().includes(q) ||
+            (s.genre && s.genre.toLowerCase().includes(q))
+        );
+        this.renderSongList(filtered);
+    }
+    
+    // ===== FAVORITES =====
+    
+    setupFavorites() {
+        if (this.elements.favoriteBtn) {
+            this.elements.favoriteBtn.addEventListener('click', () => this.toggleFavorite());
+        }
+    }
+    
+    async toggleFavorite() {
+        if (!this.config.isAuthenticated) {
+            this.showToast('Please log in to favorite songs', 'info');
+            return;
+        }
+        
+        const btn = this.elements.favoriteBtn;
+        if (!btn) return;
+        
+        const songId = btn.dataset.songId;
+        
+        try {
+            const response = await fetch(`/api/favorites/toggle/${songId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.config.csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (!response.ok) throw new Error('Failed to toggle favorite');
+            
+            const data = await response.json();
+            
+            // Update button UI
+            btn.classList.toggle('active', data.favorited);
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.setAttribute('fill', data.favorited ? 'currentColor' : 'none');
+            }
+            
+            // Update sidebar
+            const songInList = this.songList.find(s => s.id == songId);
+            if (songInList) {
+                songInList.is_favorite = data.favorited;
+                this.renderSongList();
+            }
+            
+            this.showToast(data.favorited ? 'Added to favorites ♥' : 'Removed from favorites', 'success');
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+            this.showToast('Error updating favorite', 'error');
+        }
+    }
+    
+    // ===== PLAYBACK =====
     
     /**
      * Toggle play/pause
@@ -404,7 +602,7 @@ class MusicPlayer {
     }
     
     /**
-     * Handle audio ended
+     * Handle audio ended — auto-play next song
      */
     handleEnded() {
         this.isPlaying = false;
@@ -414,6 +612,17 @@ class MusicPlayer {
         if (this.elements.repeatBtn && this.elements.repeatBtn.classList.contains('active')) {
             this.audio.currentTime = 0;
             this.audio.play();
+            return;
+        }
+        
+        // Auto-play next song
+        if (this.config.hasNext) {
+            this.showToast('Playing next song...', 'info');
+            setTimeout(() => {
+                window.location.href = `?page=${this.config.nextPage}`;
+            }, 500);
+        } else {
+            this.showToast('End of playlist', 'info');
         }
     }
     
@@ -429,11 +638,13 @@ class MusicPlayer {
      * Handle buffering state
      */
     handleBuffering(isBuffering) {
-        // Could add loading spinner here
         if (isBuffering) {
             this.elements.playBtn?.classList.add('buffering');
+            // Show loading skeleton overlay
+            document.querySelector('.album-art')?.classList.toggle('loading', true);
         } else {
             this.elements.playBtn?.classList.remove('buffering');
+            document.querySelector('.album-art')?.classList.toggle('loading', false);
         }
     }
     
@@ -558,6 +769,14 @@ class MusicPlayer {
         if (this.elements.shuffleBtn) {
             this.elements.shuffleBtn.classList.toggle('active');
             const isActive = this.elements.shuffleBtn.classList.contains('active');
+            
+            if (isActive) {
+                // Shuffle the queue
+                this.queue = [...this.songList].sort(() => Math.random() - 0.5);
+            } else {
+                this.queue = [...this.songList];
+            }
+            
             this.showToast(isActive ? 'Shuffle enabled' : 'Shuffle disabled', 'info');
         }
     }

@@ -1,3 +1,4 @@
+{% load static %}
 {% for item in page_obj %}
 <!-- Main Content -->
 <main class="main-content">
@@ -14,7 +15,21 @@
             <div class="song-info">
                 <h1 id="song-title" class="song-title">{{ item.title }}</h1>
                 <p id="song-artist" class="song-artist">{{ item.artist }}</p>
+                {% if item.genre %}
+                <span class="song-genre-badge" style="--chip-color: {{ item.genre.color }}">{{ item.genre.name }}</span>
+                {% endif %}
             </div>
+            
+            <!-- Favorite Button -->
+            {% if user.is_authenticated %}
+            <button id="favorite-btn" class="favorite-btn {% if item.id in favorite_ids %}active{% endif %}" 
+                    data-song-id="{{ item.id }}" title="Toggle Favorite">
+                <svg viewBox="0 0 24 24" fill="{% if item.id in favorite_ids %}currentColor{% else %}none{% endif %}" 
+                     stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </button>
+            {% endif %}
             
             <!-- Audio Visualizer -->
             <div class="visualizer-container">
@@ -53,7 +68,9 @@
                     </svg>
                 </button>
                 
-                <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}" class="control-btn nav-btn" title="Previous">
+                <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}" 
+                   class="control-btn nav-btn {% if not page_obj.has_previous %}disabled{% endif %}" 
+                   title="Previous" id="prev-nav-btn">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
                     </svg>
@@ -68,7 +85,10 @@
                     </svg>
                 </button>
                 
-                <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}" class="control-btn nav-btn" title="Next">
+                <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}" 
+                   class="control-btn nav-btn {% if not page_obj.has_next %}disabled{% endif %}" 
+                   title="Next" id="next-nav-btn"
+                   data-next-page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% endif %}">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
                     </svg>
@@ -152,7 +172,8 @@
     </div>
     
     <div class="floating-controls">
-        <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}" class="control-btn" title="Previous">
+        <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}" 
+           class="control-btn {% if not page_obj.has_previous %}disabled{% endif %}" title="Previous">
             <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                 <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/>
             </svg>
@@ -167,7 +188,8 @@
             </svg>
         </button>
         
-        <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}" class="control-btn" title="Next">
+        <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}" 
+           class="control-btn {% if not page_obj.has_next %}disabled{% endif %}" title="Next">
             <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                 <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
             </svg>
