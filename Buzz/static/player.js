@@ -75,9 +75,9 @@ class MusicPlayer {
             durationDisplay: document.getElementById('duration'),
             
             // Floating player progress
-            floatingProgressBar: document.getElementById('floating-progress'),
+            floatingProgressBar: document.getElementById('floating-progress-bar'),
             floatingCurrentTime: document.getElementById('floating-current-time'),
-            floatingDuration: document.getElementById('floating-total-time'),
+            floatingDuration: document.getElementById('floating-duration'),
             
             // Controls
             playBtn: document.getElementById('play-btn'),
@@ -219,7 +219,7 @@ class MusicPlayer {
         if (this.elements.floatingProgressBar) {
             this.elements.floatingProgressBar.addEventListener('input', (e) => {
                 if (this.duration) {
-                    this.audio.currentTime = (e.target.value / 100) * this.duration;
+                    this.audio.currentTime = (parseFloat(e.target.value) / 100) * this.duration;
                 }
             });
         }
@@ -613,7 +613,6 @@ class MusicPlayer {
         
         if (this.elements.floatingProgressBar) {
             this.elements.floatingProgressBar.value = progress;
-            this.elements.floatingProgressBar.style.setProperty('--value', `${progress}%`);
         }
         
         // Update time displays

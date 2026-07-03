@@ -71,6 +71,9 @@ Music_Player/
 ├── requirements.txt                 # Python dependencies
 ├── .env                             # Environment variables
 ├── settings.py                      # Project settings & REST config
+├── urls.py                          # Project URL routing
+├── wsgi.py                          # WSGI config for deployment
+├── asgi.py                          # ASGI config for async deployment
 ├── Buzz/
 │   ├── models.py                    # DB schemas: Song, Genre, Album, Favorite
 │   ├── api_views.py                 # RESTful JSON endpoints
