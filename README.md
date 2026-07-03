@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.0.0-blueviolet?style=flat-square" alt="Version 3.0.0" />
+  <img src="https://img.shields.io/badge/version-4.0.0-blueviolet?style=flat-square" alt="Version 4.0.0" />
   <img src="https://img.shields.io/badge/django-5-092E20?style=flat-square&logo=django&logoColor=white" alt="Django" />
   <img src="https://img.shields.io/badge/python-3-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/javascript-ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript" />
@@ -165,6 +165,7 @@ python manage.py runserver
 
 | Version | Highlights |
 |---|---|
+| **v4.0** | **The Advanced Player Update:** Custom Playlists, 3-band Audio Equalizer, OS Media Controls, Queue Management, Sleep Timer, and Real-time Lyrics Translation. |
 | **v3.0** | **The REST & UI Update:** Complete glassmorphism redesign, dynamic client-side sidebar, Django REST Framework API, User Auth, Favorites, Albums/Genres models, and `fetch_lyrics` CLI. |
 | **v2.0** | **The Interactive Update:** Live Web Audio API visualizer (Bars, Wave, Circular), synced scrolling lyrics, and comprehensive keyboard shortcut controls. |
 | **v1.0** | **Initial Release:** Core HTML5 audio playback, basic `Song` model, Django admin integration, and simple server-side pagination. |
