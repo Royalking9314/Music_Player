@@ -236,7 +236,7 @@
                 if (!originalText || originalText.trim() === '') return;
                 
                 try {
-                    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalText)}&langpair=en|${targetLang}`);
+                    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalText)}&langpair=Autodetect|${targetLang}`);
                     const data = await res.json();
                     if (data && data.responseData && data.responseData.translatedText) {
                         translationCache[targetLang][index] = data.responseData.translatedText;
