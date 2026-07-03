@@ -99,6 +99,19 @@
                 {% endfor %}
             </div>
             
+            <!-- Playlists Section -->
+            {% if user.is_authenticated %}
+            <div class="sidebar-header" style="margin-top: var(--spacing-lg);">
+                <h2 class="sidebar-title" style="font-size: 1rem;">Playlists</h2>
+                <button id="create-playlist-btn" class="control-btn" title="Create Playlist" style="padding: 4px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
+            <div id="playlist-list" class="genre-chips">
+                <!-- Populated by JS -->
+            </div>
+            {% endif %}
+            
             <!-- Song List -->
             <div id="song-list" class="song-list">
                 <!-- Loading skeleton -->
@@ -194,6 +207,54 @@
                 return minutes * 60 + seconds;
             }
             
+            let targetLang = '';
+            let translationCache = {};
+            
+            const langSelect = document.getElementById('lyrics-lang');
+            if (langSelect) {
+                langSelect.addEventListener('change', (e) => {
+                    targetLang = e.target.value;
+                    if (targetLang) {
+                        if (!translationCache[targetLang]) translationCache[targetLang] = {};
+                        translateLine(currentLyricIndex);
+                    } else {
+                        renderLyrics(lyricsData);
+                        highlightCurrentLyric(currentLyricIndex);
+                    }
+                });
+            }
+
+            async function translateLine(index) {
+                if (!targetLang || index < 0 || index >= lyricsData.length) return;
+                
+                if (translationCache[targetLang][index]) {
+                    updateLineUI(index, translationCache[targetLang][index]);
+                    return;
+                }
+                
+                const originalText = lyricsData[index].lyrics;
+                if (!originalText || originalText.trim() === '') return;
+                
+                try {
+                    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(originalText)}&langpair=en|${targetLang}`);
+                    const data = await res.json();
+                    if (data && data.responseData && data.responseData.translatedText) {
+                        translationCache[targetLang][index] = data.responseData.translatedText;
+                        updateLineUI(index, data.responseData.translatedText);
+                    }
+                } catch (e) {
+                    console.error('Translation error:', e);
+                }
+            }
+            
+            function updateLineUI(index, translatedText) {
+                if (!targetLang) return;
+                const line = lyricsContainer.querySelector(`.lyrics-line[data-index="${index}"]`);
+                if (line) {
+                    line.innerHTML = `${lyricsData[index].lyrics}<br><small style="color:var(--primary); opacity:0.9; font-size:0.85em;">${translatedText}</small>`;
+                }
+            }
+
             function renderLyrics(data) {
                 lyricsContainer.innerHTML = data.map((item, index) => 
                     `<p class="lyrics-line" data-index="${index}">${item.lyrics}</p>`
@@ -204,7 +265,15 @@
                 const lines = lyricsContainer.querySelectorAll('.lyrics-line');
                 lines.forEach((line, i) => {
                     line.classList.toggle('active-line', i === index);
+                    // Clear translations from non-active lines to reduce clutter
+                    if (targetLang && i !== index) {
+                        line.textContent = lyricsData[i].lyrics;
+                    }
                 });
+                
+                if (targetLang) {
+                    translateLine(index);
+                }
                 
                 // Scroll to current lyric
                 const activeLine = lines[index];

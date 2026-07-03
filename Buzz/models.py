@@ -116,5 +116,21 @@ class Favorite(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.user.username} ♥ {self.song.title}"
+        return f"{self.user.username} - {self.song.title}"
 
+
+class Playlist(models.Model):
+    """User-created playlist of songs."""
+    title = models.CharField(max_length=200)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='playlists'
+    )
+    songs = models.ManyToManyField(Song, related_name='playlists', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.title} by {self.user.username}"

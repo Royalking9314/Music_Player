@@ -36,11 +36,26 @@
                 <canvas id="visualizer-canvas"></canvas>
             </div>
             
-            <!-- Visualization Mode Selector -->
             <div class="viz-mode-selector">
                 <button class="viz-mode-btn active" data-mode="bars">Bars</button>
                 <button class="viz-mode-btn" data-mode="waveform">Wave</button>
                 <button class="viz-mode-btn" data-mode="circular">Circular</button>
+            </div>
+            
+            <!-- Equalizer (EQ) -->
+            <div class="eq-container" style="display: flex; gap: 15px; margin-top: 15px; justify-content: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                    <input type="range" id="eq-bass" min="-15" max="15" value="0" orient="vertical" style="writing-mode: bt-lr; -webkit-appearance: slider-vertical; height: 60px; accent-color: var(--primary);">
+                    <span style="font-size: 0.7em; color: var(--text-muted); font-weight: bold;">Bass</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                    <input type="range" id="eq-mid" min="-15" max="15" value="0" orient="vertical" style="writing-mode: bt-lr; -webkit-appearance: slider-vertical; height: 60px; accent-color: var(--primary);">
+                    <span style="font-size: 0.7em; color: var(--text-muted); font-weight: bold;">Mid</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                    <input type="range" id="eq-treble" min="-15" max="15" value="0" orient="vertical" style="writing-mode: bt-lr; -webkit-appearance: slider-vertical; height: 60px; accent-color: var(--primary);">
+                    <span style="font-size: 0.7em; color: var(--text-muted); font-weight: bold;">Treble</span>
+                </div>
             </div>
             
             <!-- Progress Bar -->
@@ -102,6 +117,19 @@
                         <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
                     </svg>
                 </button>
+                
+                <div style="position: relative; display: inline-block;">
+                    <select id="sleep-timer" class="control-btn" title="Sleep Timer" style="background: none; border: none; color: inherit; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; padding: 8px;">
+                        <option value="0" style="color: black;">Timer Off</option>
+                        <option value="15" style="color: black;">15 mins</option>
+                        <option value="30" style="color: black;">30 mins</option>
+                        <option value="60" style="color: black;">1 hour</option>
+                    </select>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="position: absolute; right: -5px; top: 12px; pointer-events: none;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
             </div>
             
             <!-- Volume Control -->
@@ -131,8 +159,17 @@
     <!-- Lyrics Section -->
     <section class="lyrics-section">
         <div class="lyrics-card glass-container fade-in">
-            <div class="lyrics-header">
+            <div class="lyrics-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h2 class="lyrics-title">Lyrics</h2>
+                <select id="lyrics-lang" style="padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: var(--text-primary); cursor: pointer; outline: none;">
+                    <option value="" style="background: var(--surface);">Original</option>
+                    <option value="es" style="background: var(--surface);">Spanish</option>
+                    <option value="fr" style="background: var(--surface);">French</option>
+                    <option value="de" style="background: var(--surface);">German</option>
+                    <option value="ja" style="background: var(--surface);">Japanese</option>
+                    <option value="hi" style="background: var(--surface);">Hindi</option>
+                </select>
+            </div>
                 <div class="nav-controls">
                     {% if page_obj.has_previous %}
                     <a href="?page={{ page_obj.previous_page_number }}" class="nav-btn" title="Previous Song">

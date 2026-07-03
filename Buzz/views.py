@@ -16,9 +16,15 @@ def index(request):
     # Search filter
     search_query = request.GET.get('search', '').strip()
     if search_query:
+        from django.db.models import Q
         songs_qs = songs_qs.filter(
-            models_title_artist_search(search_query)
+            Q(title__icontains=search_query) | Q(artist__icontains=search_query)
         )
+
+    # Song ID direct load (for queue/playlists)
+    song_id = request.GET.get('song_id')
+    if song_id:
+        songs_qs = Song.objects.filter(id=song_id)
 
     # Genre filter
     genre_slug = request.GET.get('genre', '').strip()

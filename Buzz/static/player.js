@@ -47,6 +47,7 @@ class MusicPlayer {
         this.setupThemeToggle();
         this.setupSidebar();
         this.setupFavorites();
+        this.setupContextMenu();
         this.updateVolumeUI(1);
         this.renderSongList();
         
@@ -173,8 +174,14 @@ class MusicPlayer {
         this.audio.addEventListener('waiting', () => this.handleBuffering(true));
         this.audio.addEventListener('canplay', () => this.handleBuffering(false));
         
-        // Set initial volume
-        this.audio.volume = 1;
+        // Set initial volume from localStorage
+        const savedVolume = localStorage.getItem('buzz-volume');
+        this.audio.volume = savedVolume !== null ? parseFloat(savedVolume) : 1;
+        
+        // Media Session integration
+        this.audio.addEventListener('loadedmetadata', () => {
+            this.updateMediaSession();
+        });
     }
     
     /**
@@ -240,6 +247,36 @@ class MusicPlayer {
         
         if (this.elements.repeatBtn) {
             this.elements.repeatBtn.addEventListener('click', () => this.toggleRepeat());
+        }
+        
+        // EQ Sliders
+        const eqBass = document.getElementById('eq-bass');
+        const eqMid = document.getElementById('eq-mid');
+        const eqTreble = document.getElementById('eq-treble');
+        
+        const updateEQ = () => {
+            if (this.visualizer && this.visualizer.isInitialized) {
+                this.visualizer.setEQ(eqBass.value, eqMid.value, eqTreble.value);
+            } else {
+                localStorage.setItem('buzz-eq', JSON.stringify({bass: eqBass.value, mid: eqMid.value, treble: eqTreble.value}));
+            }
+        };
+        
+        if (eqBass) eqBass.addEventListener('input', updateEQ);
+        if (eqMid) eqMid.addEventListener('input', updateEQ);
+        if (eqTreble) eqTreble.addEventListener('input', updateEQ);
+        
+        const savedEQ = JSON.parse(localStorage.getItem('buzz-eq') || '{"bass":0,"mid":0,"treble":0}');
+        if (eqBass) eqBass.value = savedEQ.bass;
+        if (eqMid) eqMid.value = savedEQ.mid;
+        if (eqTreble) eqTreble.value = savedEQ.treble;
+
+        // Sleep Timer
+        const sleepTimer = document.getElementById('sleep-timer');
+        if (sleepTimer) {
+            sleepTimer.addEventListener('change', (e) => {
+                this.setSleepTimer(parseInt(e.target.value) || 0);
+            });
         }
     }
     
@@ -615,6 +652,21 @@ class MusicPlayer {
             return;
         }
         
+        // Check Queue
+        let queueStr = localStorage.getItem('buzz-queue');
+        if (queueStr) {
+            let queue = JSON.parse(queueStr);
+            if (queue.length > 0) {
+                let nextSongId = queue.shift();
+                localStorage.setItem('buzz-queue', JSON.stringify(queue));
+                this.showToast('Playing next from queue...', 'info');
+                setTimeout(() => {
+                    window.location.href = `?song_id=${nextSongId}`;
+                }, 500);
+                return;
+            }
+        }
+        
         // Auto-play next song
         if (this.config.hasNext) {
             this.showToast('Playing next song...', 'info');
@@ -623,6 +675,38 @@ class MusicPlayer {
             }, 500);
         } else {
             this.showToast('End of playlist', 'info');
+        }
+    }
+    
+    // ===== MEDIA SESSION =====
+    updateMediaSession() {
+        if ('mediaSession' in navigator) {
+            const titleEl = document.getElementById('song-title');
+            const artistEl = document.getElementById('song-artist');
+            const imgEl = document.getElementById('album-art');
+            
+            if (titleEl && artistEl) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: titleEl.textContent,
+                    artist: artistEl.textContent,
+                    artwork: imgEl ? [{ src: imgEl.src, sizes: '512x512', type: 'image/jpeg' }] : []
+                });
+                
+                navigator.mediaSession.setActionHandler('play', () => this.togglePlay());
+                navigator.mediaSession.setActionHandler('pause', () => this.togglePlay());
+                
+                if (this.config.hasPrev) {
+                    navigator.mediaSession.setActionHandler('previoustrack', () => {
+                        window.location.href = `?page=${this.config.prevPage}`;
+                    });
+                }
+                
+                if (this.config.hasNext) {
+                    navigator.mediaSession.setActionHandler('nexttrack', () => {
+                        window.location.href = `?page=${this.config.nextPage}`;
+                    });
+                }
+            }
         }
     }
     
@@ -693,6 +777,8 @@ class MusicPlayer {
             this.isMuted = false;
             this.previousVolume = volume;
         }
+        
+        localStorage.setItem('buzz-volume', volume);
         
         this.updateVolumeUI(volume);
     }
@@ -868,6 +954,178 @@ class MusicPlayer {
         this.keyboardHintTimeout = setTimeout(() => {
             hint.classList.remove('visible');
         }, 1500);
+    }
+    
+    // ===== SLEEP TIMER =====
+    setSleepTimer(minutes) {
+        if (this.sleepTimer) clearTimeout(this.sleepTimer);
+        if (minutes > 0) {
+            this.showToast(`Sleep timer set for ${minutes} minutes`, 'info');
+            this.sleepTimer = setTimeout(() => {
+                if (this.isPlaying) this.togglePlay();
+                this.showToast('Sleep timer ended playback', 'info');
+            }, minutes * 60 * 1000);
+        } else {
+            this.showToast('Sleep timer cancelled', 'info');
+        }
+    // ===== PLAYLISTS & CONTEXT MENU =====
+    async loadPlaylists() {
+        if (!this.config.isAuthenticated) return;
+        const container = document.getElementById('playlist-list');
+        if (!container) return;
+        
+        try {
+            const res = await fetch('/api/playlists/');
+            if (!res.ok) return;
+            const playlists = await res.json();
+            
+            container.innerHTML = playlists.map(p => 
+                `<div class="genre-chip" style="cursor:pointer;" onclick="musicPlayer.playPlaylist(${p.id})">
+                    ${p.title} (${p.songs.length})
+                </div>`
+            ).join('');
+            
+            // Expose globally for context menu usage
+            window.buzzPlaylists = playlists;
+        } catch (e) {
+            console.error('Error loading playlists', e);
+        }
+    }
+
+    async playPlaylist(id) {
+        try {
+            const res = await fetch(`/api/playlists/${id}/`);
+            if (!res.ok) throw new Error('Failed to load playlist');
+            const playlist = await res.json();
+            
+            if (playlist.songs && playlist.songs.length > 0) {
+                const songIds = playlist.songs.map(s => s.id);
+                localStorage.setItem('buzz-queue', JSON.stringify(songIds.slice(1)));
+                window.location.href = `?song_id=${songIds[0]}`;
+            } else {
+                this.showToast('Playlist is empty', 'error');
+            }
+        } catch (e) {
+            console.error('Error playing playlist', e);
+        }
+    }
+    
+    setupContextMenu() {
+        this.contextMenu = document.createElement('div');
+        this.contextMenu.className = 'context-menu glass-container';
+        this.contextMenu.style.cssText = 'display:none; position:absolute; z-index:9999; padding:8px; border-radius:8px; min-width:150px;';
+        this.contextMenu.innerHTML = `
+            <div class="menu-item" id="ctx-add-queue" style="padding:8px; cursor:pointer;">Add to Queue</div>
+            <div class="menu-item" id="ctx-add-playlist" style="padding:8px; cursor:pointer;">Add to Playlist</div>
+        `;
+        document.body.appendChild(this.contextMenu);
+        
+        document.addEventListener('click', () => { this.contextMenu.style.display = 'none'; });
+        this.contextMenu.addEventListener('click', (e) => e.stopPropagation());
+        
+        const songListContainer = document.getElementById('song-list');
+        if (songListContainer) {
+            songListContainer.addEventListener('contextmenu', (e) => {
+                const songItem = e.target.closest('.song-item');
+                if (songItem) {
+                    e.preventDefault();
+                    this.contextMenuSongId = songItem.dataset.songId;
+                    this.contextMenu.style.display = 'block';
+                    this.contextMenu.style.left = `${e.pageX}px`;
+                    this.contextMenu.style.top = `${e.pageY}px`;
+                }
+            });
+        }
+        
+        document.getElementById('ctx-add-queue').addEventListener('click', () => {
+            let queueStr = localStorage.getItem('buzz-queue');
+            let queue = queueStr ? JSON.parse(queueStr) : [];
+            queue.push(this.contextMenuSongId);
+            localStorage.setItem('buzz-queue', JSON.stringify(queue));
+            this.showToast('Added to Queue', 'success');
+            this.contextMenu.style.display = 'none';
+        });
+        
+        document.getElementById('ctx-add-playlist').addEventListener('click', async () => {
+            this.contextMenu.style.display = 'none';
+            if (!this.config.isAuthenticated) {
+                this.showToast('Please log in to use playlists', 'info');
+                return;
+            }
+            
+            const pName = prompt("Enter existing playlist name or a new one to create:");
+            if (!pName) return;
+            
+            try {
+                let pid = null;
+                const playlists = window.buzzPlaylists || [];
+                const existing = playlists.find(p => p.title.toLowerCase() === pName.toLowerCase());
+                
+                if (existing) {
+                    pid = existing.id;
+                } else {
+                    const res = await fetch('/api/playlists/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.config.csrfToken
+                        },
+                        body: JSON.stringify({ title: pName, songs: [] })
+                    });
+                    if (res.ok) {
+                        const newP = await res.json();
+                        pid = newP.id;
+                    }
+                }
+                
+                if (pid) {
+                    await fetch(`/api/playlists/${pid}/add_song/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.config.csrfToken
+                        },
+                        body: JSON.stringify({ song_id: this.contextMenuSongId })
+                    });
+                    this.showToast('Added to Playlist', 'success');
+                    this.loadPlaylists();
+                }
+            } catch (e) {
+                this.showToast('Failed to add to playlist', 'error');
+            }
+        });
+        
+        // Also load playlists on init
+        this.loadPlaylists();
+        
+        // Setup create playlist button
+        const createPlaylistBtn = document.getElementById('create-playlist-btn');
+        if (createPlaylistBtn) {
+            createPlaylistBtn.addEventListener('click', async () => {
+                if (!this.config.isAuthenticated) {
+                    this.showToast('Please log in to create playlists', 'info');
+                    return;
+                }
+                const pName = prompt("Enter new playlist name:");
+                if (!pName) return;
+                try {
+                    const res = await fetch('/api/playlists/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.config.csrfToken
+                        },
+                        body: JSON.stringify({ title: pName, songs: [] })
+                    });
+                    if (res.ok) {
+                        this.showToast('Playlist created!', 'success');
+                        this.loadPlaylists();
+                    }
+                } catch (e) {
+                    this.showToast('Failed to create playlist', 'error');
+                }
+            });
+        }
     }
 }
 

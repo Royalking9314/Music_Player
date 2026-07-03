@@ -1,13 +1,13 @@
-from rest_framework import generics, status, filters
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics, status, filters, viewsets
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from .models import Song, Genre, Favorite
+from .models import Song, Genre, Favorite, Playlist
 from .serializers import (
     SongSerializer, GenreSerializer,
-    FavoriteSerializer,
+    FavoriteSerializer, PlaylistSerializer,
 )
 
 
@@ -73,3 +73,27 @@ def toggle_favorite(request, song_id):
         favorite.delete()
         return Response({'favorited': False}, status=status.HTTP_200_OK)
     return Response({'favorited': True}, status=status.HTTP_201_CREATED)
+
+class PlaylistViewSet(viewsets.ModelViewSet):
+    """
+    CRUD API for Playlists via /api/playlists/
+    """
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Playlist.objects.filter(user=self.request.user).prefetch_related('songs')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def add_song(self, request, pk=None):
+        playlist = self.get_object()
+        song_id = request.data.get('song_id')
+        if not song_id:
+            return Response({'error': 'song_id required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        song = get_object_or_404(Song, pk=song_id)
+        playlist.songs.add(song)
+        return Response({'status': 'song added'}, status=status.HTTP_200_OK)

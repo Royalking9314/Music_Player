@@ -63,14 +63,38 @@ class AudioVisualizer {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             this.audioContext = new AudioContext();
             
+            // Create EQ nodes
+            this.eqNodes = {
+                bass: this.audioContext.createBiquadFilter(),
+                mid: this.audioContext.createBiquadFilter(),
+                treble: this.audioContext.createBiquadFilter()
+            };
+            
+            this.eqNodes.bass.type = 'lowshelf';
+            this.eqNodes.bass.frequency.value = 250;
+            this.eqNodes.mid.type = 'peaking';
+            this.eqNodes.mid.frequency.value = 1000;
+            this.eqNodes.mid.Q.value = 1;
+            this.eqNodes.treble.type = 'highshelf';
+            this.eqNodes.treble.frequency.value = 4000;
+            
+            // Load saved EQ from localStorage
+            const savedEQ = JSON.parse(localStorage.getItem('buzz-eq') || '{"bass":0,"mid":0,"treble":0}');
+            this.eqNodes.bass.gain.value = savedEQ.bass;
+            this.eqNodes.mid.gain.value = savedEQ.mid;
+            this.eqNodes.treble.gain.value = savedEQ.treble;
+            
             // Create analyser node
             this.analyser = this.audioContext.createAnalyser();
             this.analyser.fftSize = 256;
             this.analyser.smoothingTimeConstant = this.settings[this.currentMode].smoothing;
             
-            // Connect audio element to analyser
+            // Connect nodes: Source -> Bass -> Mid -> Treble -> Analyser -> Destination
             this.source = this.audioContext.createMediaElementSource(this.audio);
-            this.source.connect(this.analyser);
+            this.source.connect(this.eqNodes.bass);
+            this.eqNodes.bass.connect(this.eqNodes.mid);
+            this.eqNodes.mid.connect(this.eqNodes.treble);
+            this.eqNodes.treble.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
             
             this.bufferLength = this.analyser.frequencyBinCount;
@@ -91,6 +115,17 @@ class AudioVisualizer {
         if (this.audioContext && this.audioContext.state === 'suspended') {
             await this.audioContext.resume();
         }
+    }
+    
+    /**
+     * Set Equalizer values
+     */
+    setEQ(bass, mid, treble) {
+        if (!this.eqNodes) return;
+        this.eqNodes.bass.gain.value = parseFloat(bass);
+        this.eqNodes.mid.gain.value = parseFloat(mid);
+        this.eqNodes.treble.gain.value = parseFloat(treble);
+        localStorage.setItem('buzz-eq', JSON.stringify({bass, mid, treble}));
     }
     
     /**

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Song, Genre, Album, Favorite
+from .models import Song, Genre, Album, Favorite, Playlist
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -72,3 +72,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ['id', 'song', 'created_at']
+
+
+class PlaylistSerializer(serializers.ModelSerializer):
+    songs = SongSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Playlist
+        fields = ['id', 'title', 'songs', 'created_at']
+        read_only_fields = ['id', 'created_at']
