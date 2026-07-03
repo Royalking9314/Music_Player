@@ -968,6 +968,8 @@ class MusicPlayer {
         } else {
             this.showToast('Sleep timer cancelled', 'info');
         }
+    }
+    
     // ===== PLAYLISTS & CONTEXT MENU =====
     async loadPlaylists() {
         if (!this.config.isAuthenticated) return;
