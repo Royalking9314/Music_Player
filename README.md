@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/django-5-092E20?style=flat-square&logo=django&logoColor=white" alt="Django" />
   <img src="https://img.shields.io/badge/python-3-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/javascript-ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/sqlite-3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite" />
+  <img src="https://img.shields.io/badge/postgresql-Supabase-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
 </p>
 
 ---
@@ -45,7 +45,7 @@ Buzz Music Player uses a decoupled approach where Django serves the initial UI s
 └──────────────────┬───────────────────────────┘
                    │ ORM / Models
 ┌──────────────────▼───────────────────────────┐
-│             Database (SQLite)                │
+│           Database (PostgreSQL)              │
 │  • Song • Genre • Album • Favorite           │
 └──────────────────────────────────────────────┘
 ```
@@ -57,7 +57,7 @@ Buzz Music Player uses a decoupled approach where Django serves the initial UI s
 | **UI Framework** | HTML5 + Vanilla JavaScript (ES6) |
 | **Styling** | Custom CSS (Glassmorphism, CSS Variables) |
 | **Backend Framework**| Django + Django REST Framework |
-| **Database** | SQLite3 |
+| **Database** | PostgreSQL (Supabase) |
 | **Media API** | Web Audio API |
 | **Typography** | Inter (Google Fonts) |
 
@@ -144,6 +144,10 @@ cd "Music Player"
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Environment Setup
+# Create a .env file and add your Supabase connection string:
+# DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@[YOUR-SUPABASE-HOST]:5432/postgres
 
 # Run database migrations
 python manage.py makemigrations
