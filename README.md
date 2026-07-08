@@ -10,6 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-4.0.0-blueviolet?style=flat-square" alt="Version 4.0.0" />
+  <a href="https://music-player-vert-psi.vercel.app/"><img src="https://img.shields.io/badge/Live_Demo-vercel-black?style=flat-square&logo=vercel" alt="Live Demo" /></a>
   <img src="https://img.shields.io/badge/django-5-092E20?style=flat-square&logo=django&logoColor=white" alt="Django" />
   <img src="https://img.shields.io/badge/python-3-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/javascript-ES6-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JavaScript" />
@@ -23,6 +24,8 @@
 **Buzz Music Player** is a highly polished, single-page application experience built on Django. It transforms a standard web browser into a full-featured music environment, complete with a REST API backend, dynamic client-side filtering, and a stunning glassmorphism design system. 
 
 Whether you're organizing your library by genres, hunting down lyrics, or just relaxing with the live audio visualizer, Buzz offers a seamless and immersive listening experience.
+
+### 🔴 [Try the Live Demo](https://music-player-vert-psi.vercel.app/)
 
 ---
 
